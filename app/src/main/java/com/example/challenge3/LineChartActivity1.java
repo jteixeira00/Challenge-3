@@ -8,8 +8,10 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
@@ -60,7 +62,11 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
     private TextView tvX, tvY;
     private LineDataSet set1, set2;
     Button btnData;
+    LineData data;
     ToggleButton tempBtn, humBtn, btnLed;
+    boolean tempBool, humBool;
+    int lastTemp, lastHum;
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,15 +79,15 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
         btnData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                set1.addEntry(new Entry(6, 180));
-                seekBarX.setProgress(6);
-                //set1.notifyDataSetChanged();
+                set1.addEntry(new Entry(6, 70));
+                data.notifyDataChanged();
                 chart.notifyDataSetChanged();
                 chart.invalidate();
                 Log.d("myTag", "btn clicked");
             }
         });
-
+        tempBool = true;
+        humBool = true;
         tempBtn = findViewById(R.id.tempBtn);
         humBtn = findViewById(R.id.humBtn);
 
@@ -91,11 +97,20 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
                 if(tempBtn.isChecked()){
                     //Button is ON
                     // Do Something
+                    data.removeDataSet(set1);
+                    data.notifyDataChanged();
+                    chart.notifyDataSetChanged();
+                    chart.invalidate();
+                    tempBool = false;
+
                 }
                 else{
+                    data.addDataSet(set1);
+                    data.notifyDataChanged();
+                    chart.notifyDataSetChanged();
+                    chart.invalidate();
+                    tempBool = true;
                 }
-                //Button is OFF
-                // Do Something
             }
         });
         humBtn.setOnClickListener(new View.OnClickListener() {
@@ -104,54 +119,69 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
                 if(humBtn.isChecked()){
                     //Button is ON
                     // Do Something
+                    data.removeDataSet(set2);
+                    data.notifyDataChanged();
+                    chart.notifyDataSetChanged();
+                    chart.invalidate();
+                    humBool =  false;
+                }
+                else{
+                    data.addDataSet(set2);
+                    data.notifyDataChanged();
+                    chart.notifyDataSetChanged();
+                    chart.invalidate();
+                    humBool = true;
+                }
+
+            }
+        });
+        btnLed = findViewById(R.id.ledBtn);
+        btnLed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                if(tempBtn.isChecked()){
                 }
                 else{
                 }
-                //Button is OFF
-                // Do Something
             }
         });
 
+
         tvX = findViewById(R.id.tvXMax);
-        //tvY = findViewById(R.id.tvYMax);
+        tvY = findViewById(R.id.tvYMax);
 
         seekBarX = findViewById(R.id.seekBar1);
+        seekBarX.setMax(100);
+        seekBarX.setMin(-20);
         seekBarX.setOnSeekBarChangeListener(this);
 
         seekBarY = findViewById(R.id.seekBar2);
-        seekBarY.setMax(180);
+        seekBarY.setMax(100);
+        seekBarY.setMin(1);
         seekBarY.setOnSeekBarChangeListener(this);
 
         // // Chart Style // //
         {
             chart = findViewById(R.id.chart1);
-
             // background color
             chart.setBackgroundColor(Color.WHITE);
-
             // disable description text
             chart.getDescription().setEnabled(false);
-
             // enable touch gestures
             chart.setTouchEnabled(true);
-
             // set listeners
             chart.setOnChartValueSelectedListener(this);
             chart.setDrawGridBackground(false);
-
             // create marker to display box when values are selected
             //MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
-
             // Set the marker to the chart
             //mv.setChartView(chart);
             //chart.setMarker(mv);
-
             // enable scaling and dragging
             chart.setDragEnabled(true);
             chart.setScaleEnabled(true);
             // chart.setScaleXEnabled(true);
             // chart.setScaleYEnabled(true);
-
             // force pinch zoom along both axis
             chart.setPinchZoom(true);
         }
@@ -159,7 +189,6 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
         XAxis xAxis;
         {   // // X-Axis Style // //
             xAxis = chart.getXAxis();
-
             // vertical grid lines
             xAxis.enableGridDashedLine(10f, 10f, 0f);
         }
@@ -175,15 +204,14 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
             yAxis.enableGridDashedLine(10f, 10f, 0f);
 
             // axis range
-            yAxis.setAxisMaximum(200f);
-            yAxis.setAxisMinimum(-50f);
+            yAxis.setAxisMaximum(100f);
+            yAxis.setAxisMinimum(-40f);
         }
 
-
         // add data
-        seekBarX.setProgress(5);
-        seekBarY.setProgress(180);
-        setData(5, 180);
+        seekBarX.setProgress(20);
+        seekBarY.setProgress(40);
+        setData(5, 100);
 
         // draw points over time
         chart.animateX(1500);
@@ -203,83 +231,106 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
         for (int i = 0; i < count; i++) {
 
             float val = (float) (Math.random() * range) - 30;
-            values.add(new Entry(i, val, getResources().getDrawable(R.drawable.star)));
+            values.add(new Entry(i, val));
         }
 
         ArrayList<Entry> values2 = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             float val = (float) (Math.random() * range) - 30;
-            values2.add(new Entry(i, val, getResources().getDrawable(R.drawable.star)));
+            values2.add(new Entry(i, val));
         }
 
-        //LineDataSet set1;
-        if (chart.getData() != null &&
-                chart.getData().getDataSetCount() > 0) {
-            set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
-            set1.setValues(values);
-            set1.notifyDataSetChanged();
-            chart.getData().notifyDataChanged();
-            chart.notifyDataSetChanged();
-        } else {
-            // create a dataset and give it a type
-            set1 = new LineDataSet(values, "DataSet 1");
 
-            set1.setDrawIcons(false);
+        // create a dataset and give it a type
+        set1 = new LineDataSet(values, "Temperature (ºC)");
+        set1.setDrawIcons(false);
+        // draw dashed line
+        set1.enableDashedLine(10f, 5f, 0f);
+        // black lines and points
+        set1.setColor(Color.parseColor("#B84748"));
+        set1.setCircleColor(Color.parseColor("#B84748"));
+        // line thickness and point size
+        set1.setLineWidth(1f);
+        set1.setCircleRadius(3f);
+        // draw points as solid circles
+        set1.setDrawCircleHole(false);
+        // customize legend entry
+        set1.setFormLineWidth(1f);
+        set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+        set1.setFormSize(15.f);
 
-            // draw dashed line
-            set1.enableDashedLine(10f, 5f, 0f);
+        // text size of values
+        set1.setValueTextSize(9f);
 
-            // black lines and points
-            set1.setColor(Color.BLACK);
-            set1.setCircleColor(Color.BLACK);
+        // draw selection line as dashed
+        set1.enableDashedHighlightLine(10f, 5f, 0f);
 
-            // line thickness and point size
-            set1.setLineWidth(1f);
-            set1.setCircleRadius(3f);
-
-            // draw points as solid circles
-            set1.setDrawCircleHole(false);
-
-            // customize legend entry
-            set1.setFormLineWidth(1f);
-            set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
-            set1.setFormSize(15.f);
-
-            // text size of values
-            set1.setValueTextSize(9f);
-
-            // draw selection line as dashed
-            set1.enableDashedHighlightLine(10f, 5f, 0f);
-
-            // set the filled area
-            set1.setDrawFilled(true);
-            set1.setFillFormatter(new IFillFormatter() {
-                @Override
-                public float getFillLinePosition(ILineDataSet dataSet, LineDataProvider dataProvider) {
-                    return chart.getAxisLeft().getAxisMinimum();
-                }
-            });
-
-            // set color of filled area
-            //if (Utils.getSDKInt() >= 18) {
-                // drawables only supported on api level 18 and above
-              //  Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_red);
-                //set1.setFillDrawable(drawable);
-            //} else {
-                //set1.setFillColor(Color.BLACK);
-            //}
-
-            ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-            dataSets.add(set1); // add the data sets
+        // set the filled area
+        set1.setDrawFilled(false);
+        set1.setFillFormatter(new IFillFormatter() {
+            @Override
+            public float getFillLinePosition(ILineDataSet dataSet, LineDataProvider dataProvider) {
+                return chart.getAxisLeft().getAxisMinimum();
+            }
+        });
 
 
-            // create a data object with the data sets
-            LineData data = new LineData(dataSets);
+        //SET 2
+        // create a dataset and give it a type
+        set2 = new LineDataSet(values2, "Humidity (%)");
+        set2.setDrawIcons(false);
+        // draw dashed line
+        set2.enableDashedLine(10f, 5f, 0f);
+        // black lines and points
+        set2.setColor(Color.parseColor("#47B8B7"));
+        set2.setCircleColor(Color.parseColor("#47B8B7"));
+        // line thickness and point size
+        set2.setLineWidth(1f);
+        set2.setCircleRadius(3f);
+        // draw points as solid circles
+        set2.setDrawCircleHole(false);
+        // customize legend entry
+        set2.setFormLineWidth(1f);
+        set2.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+        set2.setFormSize(15.f);
 
-            // set data
-            chart.setData(data);
+        // text size of values
+        set2.setValueTextSize(9f);
+
+        // draw selection line as dashed
+        set2.enableDashedHighlightLine(10f, 5f, 0f);
+
+        // set the filled area
+        set2.setDrawFilled(false);
+        set2.setFillFormatter(new IFillFormatter() {
+            @Override
+            public float getFillLinePosition(ILineDataSet dataSet, LineDataProvider dataProvider) {
+                return chart.getAxisLeft().getAxisMinimum();
+            }
+        });
+
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(set1); // add the data sets
+        dataSets.add(set2);
+
+
+        // create a data object with the data sets
+        data = new LineData(dataSets);
+
+        // set data
+        chart.setData(data);
 //        }
+
+    }
+
+    public void newEntry(int timestamp, int temp, int hum){
+        if (tempBool == true){
+
         }
+
+        if (humBool == true)
+
+
     }
 
 
@@ -287,12 +338,8 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
         tvX.setText(String.valueOf(seekBarX.getProgress()));
-        //tvY.setText(String.valueOf(seekBarY.getProgress()));
+        tvY.setText(String.valueOf(seekBarY.getProgress()));
 
-        setData(seekBarX.getProgress(), seekBarY.getProgress());
-
-        // redraw
-        chart.invalidate();
     }
 
     @Override
@@ -312,4 +359,6 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
     public void onNothingSelected() {
         Log.i("Nothing selected", "Nothing selected.");
     }
+
+
 }
