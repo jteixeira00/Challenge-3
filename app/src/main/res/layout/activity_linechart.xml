@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart1"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_above="@+id/seekBar1"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="153dp" />
+
+    <SeekBar
+        android:id="@+id/seekBar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="8dp"
+        android:layout_toLeftOf="@+id/tvYMax"
+        android:max="150"
+        android:paddingBottom="12dp" />
+
+    <SeekBar
+        android:id="@+id/seekBar1"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/seekBar2"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="152dp"
+        android:layout_marginBottom="17dp"
+        android:layout_toLeftOf="@+id/tvXMax"
+        android:max="500"
+        android:paddingBottom="12dp" />
+
+    <TextView
+        android:id="@+id/tvXMax"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/seekBar1"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="15dp"
+        android:gravity="right"
+        android:text="-"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/tvYMax"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/seekBar2"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="15dp"
+        android:gravity="right"
+        android:text="-"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ToggleButton
+        android:id="@+id/tempBtn"
+        android:layout_width="60dp"
+        android:layout_height="36dp"
+        android:layout_alignStart="@+id/seekBar1"
+        android:layout_alignBottom="@+id/chart1"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="29dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="-33dp"
+        android:text="Button"
+        tools:ignore="TouchTargetSizeCheck" />
+
+    <ToggleButton
+        android:id="@+id/humBtn"
+        android:layout_width="60dp"
+        android:layout_height="36dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@+id/chart1"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="-33dp"
+        android:text="Temperature" />
+
+    <ToggleButton
+        android:id="@+id/ledBtn"
+        android:layout_width="60dp"
+        android:layout_height="36dp"
+        android:layout_above="@+id/seekBar1"
+        android:layout_alignEnd="@+id/tvXMax"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="19dp"
+        android:text="Humidity" />
+
+    <Button
+        android:id="@+id/btnAdd"
+        android:layout_width="60dp"
+        android:layout_height="32dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="102dp"
+        android:layout_marginBottom="120dp"
+        android:text="Button" />
+
+
+</RelativeLayout>
