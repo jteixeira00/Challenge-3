@@ -6,10 +6,12 @@
         <entry key="..\:/Users/joaop/AndroidStudioProjects/Challenge3/app/src/main/res/drawable/fade_red.xml" value="0.17" />
         <entry key="..\:/Users/joaop/AndroidStudioProjects/Challenge3/app/src/main/res/layout/activity_linechart.xml" value="0.37088607594936707" />
         <entry key="..\:/Users/joaop/AndroidStudioProjects/Challenge3/app/src/main/res/layout/custom_marker_view.xml" value="0.22447916666666667" />
+        <entry key="..\:/Users/joaos/AndroidStudioProjects/Challenge-3/app/src/main/res/layout/activity_linechart.xml" value="0.254981884057971" />
+        <entry key="..\:/Users/joaos/AndroidStudioProjects/Challenge-3/app/src/main/res/layout/activity_main.xml" value="0.254981884057971" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -1,6 +1,8 @@
 
 package com.example.challenge3;
 
+import static java.lang.Integer.parseInt;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -44,9 +46,18 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.Utils;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Example of a heavily customized {@link LineChart} with limit lines, custom line shapes, etc.
@@ -66,6 +77,11 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
     ToggleButton tempBtn, humBtn, btnLed;
     boolean tempBool, humBool;
     int lastTemp, lastHum;
+    int seconds = 0;
+
+    public static MQTTHelper helper;
+    public static String mqttTopic = "testtopic/challenge3mqtt";
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +95,9 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
         btnData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                newEntry(6, 80, 30);
+                newEntry(1670869056, 80, 30);
+                newEntry(1, 83, 30);
+                newEntry(5, 80, 14);
                 //set1.addEntry(new Entry(6, 70));
                 data.notifyDataChanged();
                 chart.notifyDataSetChanged();
@@ -142,7 +160,7 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
         btnLed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if(tempBtn.isChecked()){
+                if(btnLed.isChecked()){
                     turnOnLed();
                 }
                 else{
@@ -226,6 +244,16 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
 
         // draw legend entries as lines
         l.setForm(LegendForm.LINE);
+
+        //connect mqtt
+        connect();
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                seconds++;
+            }
+        }, 0, 1000);
     }
 
     //private
@@ -358,11 +386,11 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
     }
 
     public void turnOffLed(){
-        //code to send mqtt message to turn LED off
+        helper.publish("0", mqttTopic, false);
     }
 
     public void turnOnLed(){
-        //code to turn LED on
+        helper.publish("1", mqttTopic, false);
     }
 
 
@@ -392,5 +420,52 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
         Log.i("Nothing selected", "Nothing selected.");
     }
 
+    private void connect() {
+        helper = new MQTTHelper(this, "clientId-vcvCWavi23");
+
+        helper.setCallback(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                    helper.subscribeToTopic(mqttTopic);
+            }
+
+            @Override
+            public void connectionLost(Throwable cause) {
+                try {
+                    helper.stop();
+                }
+                catch(Exception e){
+
+                }
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                receivedMessage(message.toString());
+                Log.d("msg received", "received msg");
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+
+            }
+        });
+
+        helper.connect();
+        seconds = 0;
+    }
+
+    private void receivedMessage(String msg){
+        /*SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+        Timestamp temptimestamp = new Timestamp(System.currentTimeMillis());
+        String timestamp = sdf1.format(temptimestamp);*/
+        Log.d("msg received", "received msggggg");
+
+        String[] msgArray = msg.split("/");
+        int temp = parseInt(msgArray[0]);
+        int hum = parseInt(msgArray[1]);
+
+        newEntry(seconds, temp, hum);
+    }
 
 }
