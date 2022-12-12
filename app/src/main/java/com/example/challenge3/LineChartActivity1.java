@@ -79,7 +79,8 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
         btnData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                set1.addEntry(new Entry(6, 70));
+                newEntry(6, 80, 30);
+                //set1.addEntry(new Entry(6, 70));
                 data.notifyDataChanged();
                 chart.notifyDataSetChanged();
                 chart.invalidate();
@@ -88,28 +89,29 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
         });
         tempBool = true;
         humBool = true;
+        lastTemp = 10;
         tempBtn = findViewById(R.id.tempBtn);
         humBtn = findViewById(R.id.humBtn);
-
         tempBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 if(tempBtn.isChecked()){
                     //Button is ON
                     // Do Something
-                    data.removeDataSet(set1);
-                    data.notifyDataChanged();
-                    chart.notifyDataSetChanged();
-                    chart.invalidate();
-                    tempBool = false;
 
-                }
-                else{
                     data.addDataSet(set1);
                     data.notifyDataChanged();
                     chart.notifyDataSetChanged();
                     chart.invalidate();
                     tempBool = true;
+
+                }
+                else{
+                    data.removeDataSet(set1);
+                    data.notifyDataChanged();
+                    chart.notifyDataSetChanged();
+                    chart.invalidate();
+                    tempBool = false;
                 }
             }
         });
@@ -119,18 +121,19 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
                 if(humBtn.isChecked()){
                     //Button is ON
                     // Do Something
-                    data.removeDataSet(set2);
-                    data.notifyDataChanged();
-                    chart.notifyDataSetChanged();
-                    chart.invalidate();
-                    humBool =  false;
-                }
-                else{
                     data.addDataSet(set2);
                     data.notifyDataChanged();
                     chart.notifyDataSetChanged();
                     chart.invalidate();
                     humBool = true;
+                }
+                else{
+                    data.removeDataSet(set2);
+                    data.notifyDataChanged();
+                    chart.notifyDataSetChanged();
+                    chart.invalidate();
+                    humBool =  false;
+
                 }
 
             }
@@ -140,8 +143,10 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
             @Override
             public void onClick(View arg0) {
                 if(tempBtn.isChecked()){
+                    turnOnLed();
                 }
                 else{
+                    turnOffLed();
                 }
             }
         });
@@ -228,17 +233,19 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
 
         ArrayList<Entry> values = new ArrayList<>();
 
-        for (int i = 0; i < count; i++) {
-
-            float val = (float) (Math.random() * range) - 30;
-            values.add(new Entry(i, val));
-        }
+//        for (int i = 0; i < count; i++) {
+//
+//            float val = (float) (Math.random() * range) - 30;
+//            values.add(new Entry(i, val));
+//        }
 
         ArrayList<Entry> values2 = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            float val = (float) (Math.random() * range) - 30;
-            values2.add(new Entry(i, val));
-        }
+
+        //UNCOMMENT THIS CODE TO POPULATE THE HUMIDITY ARRAYLIST
+//        for (int i = 0; i < count; i++) {
+//            float val = (float) (Math.random() * range) - 30;
+//            values2.add(new Entry(i, val));
+//        }
 
 
         // create a dataset and give it a type
@@ -324,13 +331,38 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
     }
 
     public void newEntry(int timestamp, int temp, int hum){
-        if (tempBool == true){
-
+        if (tempBool){
+            //check if it's bigger than threshold and previous was smaller
+            //create entry
+            //insert and update
+            if(temp>seekBarX.getProgress() && lastTemp<seekBarX.getProgress()){
+                Toast.makeText(getApplicationContext(),"Temperature above threshold",Toast.LENGTH_SHORT).show();
+            }
+            lastTemp = temp;
+            set1.addEntry(new Entry(timestamp, temp));
         }
 
-        if (humBool == true)
+        if (humBool){
+            //check if it's bigger than threshold and previous was smaller
+            //create entry
+            //insert and update
+            if(hum>seekBarY.getProgress() && lastHum<seekBarY.getProgress()){
+                Toast.makeText(getApplicationContext(),"Humidity above threshold",Toast.LENGTH_SHORT).show();
+            }
+            lastHum = hum;
+            set2.addEntry(new Entry(timestamp, hum));
+        }
+        data.notifyDataChanged();
+        chart.notifyDataSetChanged();
+        chart.invalidate();
+    }
 
+    public void turnOffLed(){
+        //code to send mqtt message to turn LED off
+    }
 
+    public void turnOnLed(){
+        //code to turn LED on
     }
 
 
