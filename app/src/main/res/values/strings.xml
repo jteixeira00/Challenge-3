@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Challenge3</string>
+    <string name="temperature_warning_threshold_c">Temperature warning threshold (ºC)</string>
+    <string name="humidity_warning_threshold">Humidity warning threshold (%)</string>
 </resources>
