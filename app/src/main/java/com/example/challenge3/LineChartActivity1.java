@@ -80,7 +80,8 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
     int seconds = 0;
 
     public static MQTTHelper helper;
-    public static String mqttTopic = "testtopic/challenge3mqtt";
+    public static String topicData = "testtopic/challenge3data";
+    public static String topicLed = "testtopic/challenge3led";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -386,11 +387,11 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
     }
 
     public void turnOffLed(){
-        helper.publish("0", mqttTopic, false);
+        helper.publish("0", topicLed, false);
     }
 
     public void turnOnLed(){
-        helper.publish("1", mqttTopic, false);
+        helper.publish("1", topicLed, false);
     }
 
 
@@ -426,7 +427,7 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
         helper.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
-                    helper.subscribeToTopic(mqttTopic);
+                    helper.subscribeToTopic(topicData);
             }
 
             @Override
@@ -459,12 +460,15 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
         /*SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
         Timestamp temptimestamp = new Timestamp(System.currentTimeMillis());
         String timestamp = sdf1.format(temptimestamp);*/
-        Log.d("msg received", "received msggggg");
+
+        Log.d("new msg", ""+msg);
 
         String[] msgArray = msg.split("/");
-        int temp = parseInt(msgArray[0]);
-        int hum = parseInt(msgArray[1]);
+        int temp = Math.round(Float.parseFloat(msgArray[0]));
+        int hum = Math.round(Float.parseFloat(msgArray[1]));
 
+        Log.d("new msg", ""+temp);
+        Log.d("new msg", ""+hum);
         newEntry(seconds, temp, hum);
     }
 
