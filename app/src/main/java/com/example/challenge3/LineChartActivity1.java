@@ -35,6 +35,9 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -423,17 +426,21 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
         seconds = 0;
     }
 
-    private void receivedMessage(String msg){
+    private void receivedMessage(String msg) throws JSONException {
         /*SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
         Timestamp temptimestamp = new Timestamp(System.currentTimeMillis());
         String timestamp = sdf1.format(temptimestamp);*/
 
         Log.d("new msg", ""+msg);
+        JSONObject jsonObject = new JSONObject(msg);
+        float temp = (float)jsonObject.getDouble("temperature");
+        float hum = (float)jsonObject.getDouble("humidity");
 
+                /*
         String[] msgArray = msg.split("/");
         int temp = Math.round(Float.parseFloat(msgArray[0]));
         int hum = Math.round(Float.parseFloat(msgArray[1]));
-
+        */
         Log.d("new msg", ""+temp);
         Log.d("new msg", ""+hum);
         newEntry(seconds, temp, hum);
