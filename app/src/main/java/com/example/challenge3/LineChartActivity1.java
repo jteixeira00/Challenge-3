@@ -1,24 +1,11 @@
 
 package com.example.challenge3;
 
-import static java.lang.Integer.parseInt;
-
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -28,12 +15,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.github.mikephil.charting.animation.Easing;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendForm;
-import com.github.mikephil.charting.components.LimitLine;
-import com.github.mikephil.charting.components.LimitLine.LimitLabelPosition;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -44,18 +31,12 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.Utils;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -72,7 +53,6 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
     private SeekBar seekBarX, seekBarY;
     private TextView tvX, tvY;
     private LineDataSet set1, set2;
-    Button btnData;
     LineData data;
     ToggleButton tempBtn, humBtn, btnLed;
     boolean tempBool, humBool;
@@ -92,20 +72,7 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
         setContentView(R.layout.activity_linechart);
 
         setTitle("LineChartActivity1");
-        btnData = findViewById(R.id.btnAdd);
-        btnData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                newEntry(1670869056, 80, 30);
-                newEntry(1, 83, 30);
-                newEntry(5, 80, 14);
-                //set1.addEntry(new Entry(6, 70));
-                data.notifyDataChanged();
-                chart.notifyDataSetChanged();
-                chart.invalidate();
-                Log.d("myTag", "btn clicked");
-            }
-        });
+
         tempBool = true;
         humBool = true;
         lastTemp = 10;
