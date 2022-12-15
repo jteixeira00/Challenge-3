@@ -56,8 +56,8 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
     LineData data;
     ToggleButton tempBtn, humBtn, btnLed;
     boolean tempBool, humBool;
-    int lastTemp, lastHum;
-    int seconds = 0;
+    float lastTemp, lastHum;
+    float seconds = 0;
 
     public static MQTTHelper helper;
     public static String topicData = "testtopic/challenge3data";
@@ -326,7 +326,7 @@ public class LineChartActivity1 extends AppCompatActivity implements OnSeekBarCh
 
     }
 
-    public void newEntry(int timestamp, int temp, int hum){
+    public void newEntry(float timestamp, float temp, float hum){
         if (tempBool){
             //check if it's bigger than threshold and previous was smaller
             //create entry
